@@ -27,8 +27,11 @@ psaume%: build/psaumes build/psaumes_midi
 	mv $@_psalmodie.cropped.svg $@_psalmodie.svg;
 
 	# export midi
-	# sed : ajoute une pause en fin de mesure puis ajoute le parametre MIDI
+	# sed : ajoute une pause en fin de mesure, harmonise la durée des notes, suprime la flexe, puis ajoute le parametre MIDI
 	sed -e 's/\\bar "|"/r1 \\bar "|"/g' $@.ly | \
+	sed "s/4$$/1/g" | \
+	sed "s/\\\breve/1/g" | \
+	sed "s/\\\stem.*+.*$$//g" | \
 	sed 's/\\score {/\\score { \\midi { \\tempo 1 = 120 }/g' | \
 	lilypond -o build/psaumes_midi/$@_psalmodie -;
 
